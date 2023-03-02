@@ -1,4 +1,4 @@
-# Django template
+# Bingo Backend
 
 ## Technologies
 
@@ -10,7 +10,7 @@
 
 ## Environments
 
-This template is thought and designed for the docker environment. It is not recommended to use it without docker.
+This app is thought and designed for the docker environment. It is not recommended to use it without docker.
 
 
 ### How to use Docker dev
@@ -18,7 +18,7 @@ This template is thought and designed for the docker environment. It is not reco
 1. create a file named `.env` containing the required environment variables (read the next section)
 2. run `docker-compose -f docker-compose-local-dev.yml up --build` for local dev or `docker-compose -f docker-compose-prod.yml up --build` for prod
 3. work with your local files
-4. execute commands inside the container. ex `docker exec -it django_template-app_1 python manage.py makemigrations`
+4. execute commands inside the container. ex `docker exec -it bingo-backend-app_1 python manage.py makemigrations`
 
 ### Features
 
