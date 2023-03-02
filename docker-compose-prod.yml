@@ -1,0 +1,47 @@
+version: "3"
+
+services:
+  app:
+    build: .
+    restart: always
+    command: "/scripts/docker/starter.sh"
+    ports:
+      - "8000:8000"
+    volumes:
+      - static_volume:/data/static/
+      - ./data/media:/data/media/
+      - ./data/log:/data/log/
+    depends_on:
+      - database
+    env_file:
+      - ./.env
+
+  database:
+    image: postgres:15.0
+    restart: always
+    volumes:
+      - ./data/postgresql:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_DB=app_db
+      - POSTGRES_USER=app_db
+    ports:
+      - "5432:5432"
+    env_file:
+      - ./.env
+
+  nginx:
+    image: nginx
+    restart: always
+    depends_on:
+      - app
+    ports:
+      - "8080:80"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - static_volume:/usr/src/app/static:ro
+      - ./data/media:/usr/src/app/media:ro
+    networks:
+      - default
+
+volumes:
+  static_volume:
