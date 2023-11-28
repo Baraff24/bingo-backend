@@ -77,7 +77,8 @@ class BallsListAPI(generics.ListAPIView):
     def get_queryset(self):
         queryset = Ball.objects.all()
         queryset = queryset.filter(drawn=True)
-        return queryset 
+        return queryset
+
 
 class BallsDrawAPI(APIView):
     """

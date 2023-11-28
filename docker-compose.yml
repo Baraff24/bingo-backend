@@ -1,4 +1,4 @@
-version: "3"
+version: "3.9"
 
 services:
   app:
@@ -9,24 +9,20 @@ services:
       - "8000:8000"
     volumes:
       - ./app:/app
-      - ./data/media:/data/media/
-      # - ./data/static:/data/static/
-      - ./data/log:/data/log/
-      - ./requirements.txt:/requirements.txt
-      - ./scripts:/scripts
     depends_on:
       - database
     env_file:
       - ./.env
 
   database:
-    image: postgres:15.0
+    image: postgres:16.0
     restart: always
     volumes:
       - ./data/postgresql:/var/lib/postgresql/data
     environment:
-      - POSTGRES_DB=app_db
-      - POSTGRES_USER=app_db
+     - POSTGRES_PASSWORD=${DB_PASSWORD}
+     - POSTGRES_DB=${DB_NAME}
+     - POSTGRES_USER=${DB_USERNAME}
     ports:
       - "5432:5432"
     env_file:

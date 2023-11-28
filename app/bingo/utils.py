@@ -1,6 +1,7 @@
 import random
 import numpy as np
 
+
 def gen_card():
     lista_numbers = []
 
