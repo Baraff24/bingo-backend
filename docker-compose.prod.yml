@@ -15,28 +15,32 @@ services:
       - ./volumes/static:/core/staticfiles
       - ./volumes/media:/core/mediafiles
 
-  nginx:
-    build: ./nginx
-    restart: always
-    ports:
-      - ${NGINX_PORT}:80
-      - "443:443"
-    volumes:
-      - ./volumes/static:/staticfiles
-      - ./volumes/media:/mediafiles
-      - ./ssl:/etc/nginx/ssl:ro
-    depends_on:
-      - app
-      - database
-
   database:
     image: postgres:16.0
     restart: always
     volumes:
-      - ./volumes/postgresql:/var/lib/postgresql/data
+      - ./data/postgresql:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
     environment:
       - POSTGRES_PASSWORD=${DB_PASSWORD}
       - POSTGRES_DB=${DB_NAME}
       - POSTGRES_USER=${DB_USERNAME}
     env_file:
       - ./.env
+
+  caddy:
+    build: ./caddy
+    restart: always
+    ports:
+      - ${CADDY_PORT}:80
+      - "443:443"
+    volumes:
+      - static_volume:/vol/staticfiles
+      - media_volume:/vol/mediafiles
+      - ./caddy/Caddyfile:/etc/caddy/Caddyfile
+    depends_on:
+      - app
+    environment:
+      - DOMAIN=${DOMAIN}
+      - EMAIL=${CADDY_EMAIL}
