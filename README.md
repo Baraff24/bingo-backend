@@ -89,10 +89,3 @@ DJANGO_CORS_ALLOWED_ORIGINS=http://localhost:5000
 DJANGO_CSRF_TRUSTED_ORIGINS=http://localhost:5000
 NGINX_PORT=80
 ```
-
-
-### Certbot
-
-If command `docker-compose run --rm certbot certonly --webroot --webroot-path /var/www/certbot/ --dry-run -d [domain-name]` run correctly, run it without `--dry-run` flag to make it.
-
-To renew the certificate, run `docker-compose run --rm certbot renew`
