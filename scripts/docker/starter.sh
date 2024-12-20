@@ -10,4 +10,4 @@ echo -e "\e[34m >>> Collecting Static files \e[97m"
 python manage.py collectstatic --noinput
 echo -e "\e[32m >>> Static files collect completed \e[97m"
 
-gunicorn core.asgi --bind 0.0.0.0:8000 -k uvicorn.workers.UvicornWorker --timeout 20 --workers=2
+gunicorn core.asgi --bind 0.0.0.0:8000 -k uvicorn.workers.UvicornWorker --timeout 60 --workers=4
