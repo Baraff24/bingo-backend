@@ -51,3 +51,18 @@ class WinnerSerializer(serializers.ModelSerializer):
     class Meta:
         model = Winner
         fields = '__all__'
+
+
+class ConsolationCardSerializer(serializers.ModelSerializer):
+    player_id = serializers.CharField(source='player.player_id')
+    username = serializers.CharField(source='player.username')
+    numero_matricola = serializers.CharField(source='player.numero_matricola')
+
+    class Meta:
+        model = Card
+        fields = (
+            'card_id',
+            'player_id',
+            'username',
+            'numero_matricola',
+        )

@@ -5,11 +5,14 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status, generics, filters
 
-from .constants import AMBO, TERNA, QUATERNA, CINQUINA, TOMBOLA, AMBO_WINNERS, TERNA_WINNERS, QUATERNA_WINNERS, \
-    CINQUINA_WINNERS, TOMBOLA_WINNERS
-from .models import Player, Card, Ball, Combination, Winner
-from .serializers import PlayerGetSerializer, PlayerPostSerializer, CardSerializer, BallSerializer, \
-    CombinationSerializer, WinnerSerializer
+from .constants import (AMBO, TERNA, QUATERNA, CINQUINA,
+                        TOMBOLA, AMBO_WINNERS, TERNA_WINNERS,
+                        QUATERNA_WINNERS, CINQUINA_WINNERS, TOMBOLA_WINNERS)
+from .models import (Player, Card, Ball,
+                     Combination, Winner, AvailableCombination)
+from .serializers import (PlayerGetSerializer, PlayerPostSerializer, CardSerializer,
+                          BallSerializer, CombinationSerializer,
+                          WinnerSerializer, ConsolationCardSerializer)
 from .utils import generate_card, check_win_n, check_win_tombola
 
 
@@ -87,6 +90,7 @@ class BallsDrawAPI(APIView):
     permission_classes = [IsAdminUser]
     serializer_class = BallSerializer
 
+    # TODO: Optimize the entire process and test it properly.
     def post(self, request):
         # pick a random ball
         balls_objects = list(Ball.objects.filter(drawn=False))
@@ -106,7 +110,11 @@ class BallsDrawAPI(APIView):
                         card.save()
 
             # check if the card has won
-            if check_win_n(card.card, 2) and not card.won_ambo:
+            if (
+                    check_win_n(card.card, 2)
+                    and not card.won_ambo
+                    and AvailableCombination.is_available('ambo')
+            ):
                 Combination.objects.create(player=card.player, card=card, combination=AMBO, won=True,
                                            won_at=timezone.now())
                 card.won_ambo = True
@@ -114,7 +122,11 @@ class BallsDrawAPI(APIView):
                 if Winner.objects.filter(type_of_win=AMBO).count() < AMBO_WINNERS:
                     Winner.objects.create(player=card.player, card=card, type_of_win=AMBO, won_at=timezone.now())
                 print(f'Player {card.player.username} ha fatto ambo!')
-            if check_win_n(card.card, 3) and not card.won_terno:
+            if (
+                    check_win_n(card.card, 3)
+                    and not card.won_terno
+                    and AvailableCombination.is_available('terna')
+            ):
                 Combination.objects.create(player=card.player, card=card, combination=TERNA, won=True,
                                            won_at=timezone.now())
                 card.won_terno = True
@@ -122,7 +134,11 @@ class BallsDrawAPI(APIView):
                 if Winner.objects.filter(type_of_win=TERNA).count() < TERNA_WINNERS:
                     Winner.objects.create(player=card.player, card=card, type_of_win=TERNA, won_at=timezone.now())
                 print(f'Player {card.player.username} ha fatto terna!')
-            if check_win_n(card.card, 4) and not card.won_quaterna:
+            if (
+                    check_win_n(card.card, 4)
+                    and not card.won_quaterna
+                    and AvailableCombination.is_available('quaterna')
+            ):
                 Combination.objects.create(player=card.player, card=card, combination=QUATERNA, won=True,
                                            won_at=timezone.now())
                 card.won_quaterna = True
@@ -130,7 +146,11 @@ class BallsDrawAPI(APIView):
                 if Winner.objects.filter(type_of_win=QUATERNA).count() < QUATERNA_WINNERS:
                     Winner.objects.create(player=card.player, card=card, type_of_win=QUATERNA, won_at=timezone.now())
                 print(f'Player {card.player.username} ha fatto quaterna!')
-            if check_win_n(card.card, 5) and not card.won_cinquina:
+            if (
+                    check_win_n(card.card, 5)
+                    and not card.won_cinquina
+                    and AvailableCombination.is_available('cinquina')
+            ):
                 Combination.objects.create(player=card.player, card=card, combination=CINQUINA, won=True,
                                            won_at=timezone.now())
                 card.won_cinquina = True
@@ -174,3 +194,23 @@ class WinnersListAPI(generics.ListAPIView):
     filter_backends = [filters.SearchFilter]
     search_fields = ['card__card_id', 'card__player__player_id', 'card__player__username',
                      'card__player__numero_matricola', 'type_of_win']
+
+
+class ConsolationDrawAPIView(APIView):
+    """
+    GET: draw a random card eligible for the consolation prize.
+    """
+    permission_classes = [IsAdminUser]
+    serializer_class = ConsolationCardSerializer
+
+    def get(self, request):
+        card = Card.draw_consolation_card()
+
+        if card is None:
+            return Response(
+                {"detail": "No eligible card found for consolation prize."},
+                status=status.HTTP_404_NOT_FOUND,
+            )
+
+        serializer = self.serializer_class(card)
+        return Response(serializer.data, status=status.HTTP_200_OK)

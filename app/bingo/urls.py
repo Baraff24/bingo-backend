@@ -1,6 +1,10 @@
 from django.urls import path
 
-from .views import PlayersListAPI, PlayerCreateAPI, CardsListAPI, BallsListAPI, BallsDrawAPI, CombinationsListAPI, WinnersListAPI
+from .views import (
+    PlayersListAPI, PlayerCreateAPI, CardsListAPI,
+    BallsListAPI, BallsDrawAPI, CombinationsListAPI,
+    WinnersListAPI, ConsolationDrawAPIView
+)
 
 urlpatterns = [
     path('players-list/', PlayersListAPI.as_view(), name='players-list'),
@@ -10,4 +14,5 @@ urlpatterns = [
     path('balls-draw/', BallsDrawAPI.as_view(), name='balls-draw'),
     path('combinations-list/', CombinationsListAPI.as_view(), name='combinations-list'),
     path('winners-list/', WinnersListAPI.as_view(), name='winners-list'),
+    path("consolation-draw/", ConsolationDrawAPIView.as_view(), name="consolation-draw"),
 ]
