@@ -65,6 +65,8 @@ class Card(models.Model):
         """
         # 1) every card that has not won quaterna, cinquina, or tombola
         eligible_cards = cls.objects.filter(
+            won_ambo=False,
+            won_terno=False,
             won_quaterna=False,
             won_cinquina=False,
             won_tombola=False
