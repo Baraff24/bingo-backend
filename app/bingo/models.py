@@ -2,8 +2,8 @@ import random
 from django.db import models
 from django.contrib.postgres.fields import ArrayField
 
-from .constants import (COMBINATIONS_CHOICES, NOTHING,
-                        QUATERNA, CINQUINA, TOMBOLA)
+from .constants import (COMBINATIONS_CHOICES, NOTHING, AMBO,
+                        TERNA, QUATERNA, CINQUINA, TOMBOLA)
 
 
 class Player(models.Model):
@@ -63,7 +63,7 @@ class Card(models.Model):
         Excludes players who have won a quaterna, cinquina, or tombola.
         Returns a Card or None if none are available.
         """
-        # 1) every card that has not won quaterna, cinquina, or tombola
+        # 1) every card that has not won ambo, terna, quaterna, cinquina, or tombola
         eligible_cards = cls.objects.filter(
             won_ambo=False,
             won_terno=False,
@@ -71,9 +71,9 @@ class Card(models.Model):
             won_cinquina=False,
             won_tombola=False
         ).exclude(
-            # 2) exclude players who have won quaterna, cinquina, or tombola
+            # 2) exclude players who have won ambo, terna, quaterna, cinquina, or tombola
             player__in=Winner.objects.filter(
-                type_of_win__in=[QUATERNA, CINQUINA, TOMBOLA]
+                type_of_win__in=[AMBO, TERNA, QUATERNA, CINQUINA, TOMBOLA]
             ).values_list('player', flat=True)
         )
         if not eligible_cards.exists():
