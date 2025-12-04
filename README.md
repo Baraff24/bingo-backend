@@ -72,20 +72,23 @@ You have to create a google oauth2 app and add the credentials to the admin page
 ### Example .env
 
 ```
-DJANGO_SETTINGS_MODULE=core.config.settings.development (or .production)
-SECRET_KEY=anotherrandomstring
+DJANGO_SETTINGS_MODULE=config.settings.development
+SECRET_KEY=sdfsdfsdf
 EMAIL_HOST=smtp.gmail.com
-EMAIL_HOST_PASSWORD=gmailpassword (Turn ON two factor authentication of gmail account, and create an app password - https://support.google.com/accounts/answer/185833)
+EMAIL_HOST_PASSWORD=gmailpassword
 EMAIL_HOST_USER=yourmail@gmail.com (gmail_username)
 EMAIL_PORT=587
-DB_NAME=somerandomname
-DB_USERNAME=somerandomusername
-DB_PASSWORD=somerandomstring
-DB_HOSTNAME=database
+GOOGLE_CLIENT_ID=n.apps.googleusercontent.com
+DB_NAME=db_name
+DB_USERNAME=db_username
+DB_PASSWORD=sdfsdfsdfsdf
+DB_HOSTNAME=db_hostname
 DB_PORT=5432
 DEBUG=True
-DJANGO_ALLOWED_HOSTS=*
-DJANGO_CORS_ALLOWED_ORIGINS=http://localhost:5000
-DJANGO_CSRF_TRUSTED_ORIGINS=http://localhost:5000
-NGINX_PORT=80
+DJANGO_ALLOWED_HOSTS=tombola.example.it
+DJANGO_CORS_ALLOWED_ORIGINS=https://tombola.example.it
+DJANGO_CSRF_TRUSTED_ORIGINS=https://tombola.example.it
+CADDY_PORT=80
+CADDY_EMAIL=example@example.com
+DOMAIN=tombola.example.it
 ```
